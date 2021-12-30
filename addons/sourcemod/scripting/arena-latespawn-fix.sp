@@ -17,6 +17,7 @@
 
 #include <sourcemod>
 #include <dhooks>
+#include <tf2_stocks>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -27,15 +28,17 @@ static DynamicHook g_DHookShouldGainInstantSpawn;
 
 public Plugin myinfo =
 {
-	name = "[TF2] Arena Latespawn Fix",
+	name = "[TF2] Arena Late Spawn Fix",
 	author = "Mikusch",
 	description = "Fixes players spawning during the round in arena mode",
-	version = "1.0.0",
+	version = "1.1.0",
 	url = "https://github.com/Mikusch/arena-latespawn-fix"
 }
 
 public void OnPluginStart()
 {
+	AddCommandListener(CommandListener_JoinClass, "joinclass");
+	
 	GameData gamedata = new GameData("arena-latespawn-fix");
 	if (!gamedata)
 		SetFailState("Could not find arena-latespawn-fix gamedata");
@@ -56,17 +59,18 @@ public void OnClientPutInServer(int client)
 		g_DHookShouldGainInstantSpawn.HookEntity(Hook_Post, client, DHookCallback_ShouldGainInstantSpawn_Post);
 }
 
-static DynamicHook CreateDynamicHook(GameData gamedata, const char[] name)
+public Action CommandListener_JoinClass(int client, const char[] command, int args)
 {
-	DynamicHook hook = DynamicHook.FromConf(gamedata, name);
-	if (!hook)
-		LogError("Failed to create hook setup handle for %s", name);
+	// Prevents an exploit that allows players to spawn on team unassigned
+	if (TF2_GetClientTeam(client) == TFTeam_Unassigned)
+		return Plugin_Handled;
 	
-	return hook;
+	return Plugin_Continue;
 }
 
 public MRESReturn DHookCallback_ShouldGainInstantSpawn_Post(int client, DHookReturn ret)
 {
+	// Prevents an exploit that allows players to spawn during a running round
 	if (GameRules_GetProp("m_nGameType") == TF_GAMETYPE_ARENA)
 	{
 		ret.Value = false;
@@ -74,4 +78,13 @@ public MRESReturn DHookCallback_ShouldGainInstantSpawn_Post(int client, DHookRet
 	}
 	
 	return MRES_Ignored;
+}
+
+static DynamicHook CreateDynamicHook(GameData gamedata, const char[] name)
+{
+	DynamicHook hook = DynamicHook.FromConf(gamedata, name);
+	if (!hook)
+		LogError("Failed to create hook setup handle for %s", name);
+	
+	return hook;
 }
