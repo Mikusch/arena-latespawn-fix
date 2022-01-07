@@ -31,13 +31,14 @@ public Plugin myinfo =
 	name = "[TF2] Arena Late Spawn Fix",
 	author = "Mikusch",
 	description = "Fixes players spawning during the round in arena mode",
-	version = "1.1.0",
+	version = "1.1.1",
 	url = "https://github.com/Mikusch/arena-latespawn-fix"
 }
 
 public void OnPluginStart()
 {
 	AddCommandListener(CommandListener_JoinClass, "joinclass");
+	AddCommandListener(CommandListener_JoinClass, "join_class");
 	
 	GameData gamedata = new GameData("arena-latespawn-fix");
 	if (!gamedata)
