@@ -23,8 +23,8 @@
 		{
 			"CTFPlayer::ShouldGainInstantSpawn"
 			{
-				"linux"		"443"
-				"windows"	"442"
+				"linux"		"444"
+				"windows"	"443"
 			}
 		}
 		"Functions"
