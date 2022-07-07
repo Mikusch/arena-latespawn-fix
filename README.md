@@ -1,3 +1,5 @@
+**As of the 08/07/2022 TF2 update, this repository has been archived. The fixes were properly implemented into the game at my request.**
+
 # [TF2] Arena Late Spawn Fix
 
 This plugin fixes an ancient bug that allows players to spawn during a running round in arena mode. It also prevents players from joining a class before joining a team first.
